@@ -7,14 +7,12 @@ LLMs just officially got Gold on the 2025 IMO. But there is still something I ca
 ## Motivation
 
 **Why crosswords?**
-* It feels like 99% of LLM stuff focuses on math. That's important, but it's not the only verifiable thing in the world.
-* In one sense, crossword-based reasoning is extremely complex:
+It feels like 99% of LLM stuff focuses on math. That's important, but it's not the only verifiable thing in the world.
+Crossword-based reasoning is complex:
   - Even solving one clue in isolation can require skills such as fact retrieval, word-play, or self-reference to other parts of the grid
   - Clues must solve intertwined constraints - *i.e.*, LLMs may not have an inherently good sense of constraint violations in a grid of letters
-* But there are learnable patterns:
-  - Certain types of word-play are common crosswords/many words are statistically more common in crosswords than in natural language (e.g., "OREO")
-* And, there's a natural "curriculum:" NYT difficulty scaling increases from Monday -> Saturday (Sunday is a bit weird) 
-  - In addition, published crosswords such as NYT have been curated by experts for difficulty and non-ambiguity in clues — it's an admittedly U.S./New York centric but high-quality measuring stick for human-like reasoning. 
+
+And, there's a natural "curriculum:" for example, New York Times (NYT) crossword difficulty scaling increases from Monday -> Saturday (Sunday is a bit weird). These published crosswords contain expert-curated and edited clues, making NYT crosswords an admittedly U.S./New York centric but high-quality measuring stick for some sort of logical + linguistic reasoning + fact retrieval. 
 
 **Some shoutouts:**
 * [CrosswordBench](https://arxiv.org/html/2504.00043v1), approaches this problem from a different angle - they synthetically generate crosswords and pass an *image* of the grid, instead of using expert-curated crosswords as in our benchmark. 
@@ -75,8 +73,9 @@ In general, our evaluation pipeline follows this template for using the crosswor
 
 ## Results 
 
-### Results on open models
+### Results on open-weight models
 
+Coming soon!
 
 ### Informal results on closed models
 
