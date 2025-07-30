@@ -4,12 +4,12 @@
 
 LLMs just officially got Gold on the 2025 IMO. But there is still something I can beat them at (I think): the New York Times crossword. Let's change that!
 
-![A robo-kitty-GPT attempting to solve a crossword while drinking coffee, saying "These puns are almost as hard as the IMO!"](img/banner.jpg)
+
+<img src="img/banner.png" alt="A robo-kitty-GPT attempting to solve a crossword while drinking coffee, saying 'These puns are almost as hard as the IMO!'" width="400"/>
 
 ## Motivation
 
 **Why crosswords?**
-It feels like 99% of LLM stuff focuses on math. That's important, but it's not the only verifiable thing in the world.
 Crossword-based reasoning is complex:
   - Even solving one clue in isolation can require skills such as fact retrieval, word-play, or self-reference to other parts of the grid
   - Clues must solve intertwined constraints - *i.e.*, LLMs may not have an inherently good sense of constraint violations in a grid of letters
