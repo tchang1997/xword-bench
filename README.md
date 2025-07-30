@@ -4,6 +4,8 @@
 
 LLMs just officially got Gold on the 2025 IMO. But there is still something I can beat them at (I think): the New York Times crossword. Let's change that!
 
+![A robo-kitty-GPT attempting to solve a crossword while drinking coffee, saying "These puns are almost as hard as the IMO!"](img/banner.jpg)
+
 ## Motivation
 
 **Why crosswords?**
