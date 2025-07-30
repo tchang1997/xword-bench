@@ -5,16 +5,12 @@ description = "Tools and benchmarks for crossword solving with LLMs"
 authors = [
     { name = "Trenton Chang", email = "ctrenton@umich.edu" }
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dependencies = [
     "transformers",
     "trl",
     "datasets"
 ]
-
-[project.scripts]
-evaluate-crossword = "crossword.cli.evaluate:main"
-reward-crossword = "crossword.cli.reward:main"
 
 [build-system]
 requires = ["setuptools>=61.0"]
