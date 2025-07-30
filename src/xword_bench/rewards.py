@@ -1,7 +1,7 @@
 import argparse
 import json
 
-from xword_bench.evaluation import (
+from xword_bench.utils import (
     evaluate_correctness,
     check_length_violations,
     check_grid_constraints,
