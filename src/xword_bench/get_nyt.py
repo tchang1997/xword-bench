@@ -1,3 +1,5 @@
+from argparse import ArgumentParser
+
 import requests
 import json
 import os
@@ -6,8 +8,7 @@ import time
 
 # === USER CONFIG ===
 NYT_COOKIE = os.environ["NYT_COOKIE"]  # <- paste from browser
-START_DATE = "2025-01-01"
-END_DATE = "2025-01-31"
+
 SAVE_DIR = Path("nyt_full")
 # ====================
 
@@ -35,8 +36,13 @@ def save_puzzle(puzzle_data):
         json.dump(puzzle_data, f)
 
 if __name__ == "__main__":
-    ids = get_full_puzzle_ids(START_DATE, END_DATE)
-    print(f"Found {len(ids)} puzzles between {START_DATE} and {END_DATE}")
+    psr = ArgumentParser()
+    psr.add_argument("--start", default="2025-01-01", type=str)
+    psr.add_argument("--end", default="2025-01-31", type=str)
+    args = psr.parse_args()
+
+    ids = get_full_puzzle_ids(args.start, args.end)
+    print(f"Found {len(ids)} puzzles between {args.start} and {args.end}")
     for pid in ids:
         data = download_puzzle(pid)
         save_puzzle(data)

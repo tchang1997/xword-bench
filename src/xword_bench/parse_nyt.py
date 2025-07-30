@@ -74,8 +74,8 @@ def batch_parse(input_dir: Path, output_dir: Path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Parse raw NYT puzzle JSONs into structured format.")
-    parser.add_argument("--input_dir", type=Path, help="Directory with raw NYT puzzle JSONs", default="nyt_full")
-    parser.add_argument("--output_dir", type=Path, help="Directory to write parsed JSONs", default="nyt_parsed")
+    parser.add_argument("--input-dir", type=Path, help="Directory with raw NYT puzzle JSONs", default="data/nyt_full")
+    parser.add_argument("--output-dir", type=Path, help="Directory to write parsed JSONs", default="data/nyt_parsed")
     args = parser.parse_args()
 
     batch_parse(args.input_dir, args.output_dir)
