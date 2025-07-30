@@ -1,29 +1,31 @@
-# XWordLM
+# XWordBench
 
 **Can LLMs solve the New York Times crossword?**
 
 LLMs just officially got Gold on the 2025 IMO. But there is still something I can beat them at (I think): the New York Times crossword. Let's change that!
 
+## Motivation
+
 **Why crosswords?**
 * It feels like 99% of LLM stuff focuses on math. That's important, but it's not the only verifiable thing in the world.
-* RLVR has a huge opportunity to expand beyond getting better at reasoning problems.
 * In one sense, crossword-based reasoning is extremely complex:
-    - Even solving one clue in isolation can require skills such as fact retrieval, word-play, or self-reference to other parts of the grid
-    - Clues must solve intertwined constraints - *i.e.*, LLMs may not have an inherently good sense of constraint violations in a grid of letters
+  - Even solving one clue in isolation can require skills such as fact retrieval, word-play, or self-reference to other parts of the grid
+  - Clues must solve intertwined constraints - *i.e.*, LLMs may not have an inherently good sense of constraint violations in a grid of letters
 * But there are learnable patterns:
-    - Certain types of word-play are common crosswords/many words are statistically more common in crosswords than in natural language (e.g., "OREO")
-* And, there's a natural "curriculum:" NYT difficulty scaling increases from Monday -> Saturday (Sunday is a bit weird) **
+  - Certain types of word-play are common crosswords/many words are statistically more common in crosswords than in natural language (e.g., "OREO")
+* And, there's a natural "curriculum:" NYT difficulty scaling increases from Monday -> Saturday (Sunday is a bit weird) 
+  - In addition, published crosswords such as NYT have been curated by experts for difficulty and non-ambiguity in clues — it's an admittedly U.S./New York centric but high-quality measuring stick for human-like reasoning. 
 
-Oh, most importantly: **ALL THIS IS VERIFIABLE. THERE IS ONE OBJECTIVELY CORRECT ANSWER TO A CROSSWORD, BY CONSTRUCTION.** In spite of my frustration with particularly esoteric clues/bits of pop culture knowledge, the solution is generally curated/designed to be deducible and unambiguous with human intuition (*i.e.*, me, and I used to suck at these) - so we should be able to distill some verifier into this.
-
-There are already a lot of great works that look into solving crosswords with LLMs/LLM-powered agents. Our contribution here isn't to claim SOTA, but to (hopefully) show that the complex constraint-satisifying behavior required to solve crosswords is emergent from RL-based fine-tuning without the need for additional heuristics. 
+**Some shoutouts:**
+* [CrosswordBench](https://arxiv.org/html/2504.00043v1), approaches this problem from a different angle - they synthetically generate crosswords and pass an *image* of the grid, instead of using expert-curated crosswords as in our benchmark. 
+* The [Berkeley Crossword Solver](https://arxiv.org/abs/2205.09665) combines neural QA with loopy belief propagation to algorithmically solve crosswords, instead of the classic "smash it into tokens, throw it into an LLM, and see what happens" (zero-shot). Their system outperformed all human competitors at the 2022 American Crossword Puzzle Tournament. 
 
 ## Data Processing
 
-I pay for a subscription to the NYT, including the crossword, but I can't go around releasing raw crossword data -- especially not without the permission of all the creators that put in hard work into these, allowing me to trade my research productivity for a little bit of satisfaction. Out of an abundance of caution I've also refrained from producing the data processing code, but it's not too hard to find this information these days. 
+I pay for a subscription to the NYT crossword, but I can't go around releasing raw crossword data w/o permission from the lots of creators put in a lot of hard work into these. If you are a subscriber, you can find your specific cookie from the NYT in browser (under `NYT-S` -- it looks something like `"0^...."`) and use it to access their API using the endpoints specified in the scripts.
 
-However, I do standardize all crosswords puzzles into a single JSON schema, so you can use this as a template. Here's an example with placeholder data + comments:
-```
+All crosswords puzzles follow a standardized JSON schema. Here's an example with placeholder data + comments:
+```javascript
 {
    puzzle_id: 22291,
    date: 2025-01-01,
@@ -64,32 +66,65 @@ However, I do standardize all crosswords puzzles into a single JSON schema, so y
 }
 ```
 
-Basically, in addition to some metadata about the puzzle, we store:
-* The dimensionality of the grid (usually 15x15)
-* The exact grid of answers, stored as an array of characters
-* Clues, including text and length of the corresponding answer
-* Grid numbers, which assist in locating each clue 
-
 ## Evaluation pipeline
 
 In general, our evaluation pipeline follows this template for using the crossword JSON:
 * **Prompting**: The LLM receives some processed version of the "clues" and "gridnums" keys, and is instructed to fill in clues that it's confident about in some arbitrary manner. 
 * **Programatic infilling:** Then, the rules-based system takes over and fills in a grid based on the responses (for now, we focus on a one-turn setup).
-* **Reward assignment:** A score for the LLM's attempt is computed based on the number of answers w/ the right length + completely correct answers minus constraint violations, which is computed via the "answers" key.
+* **Reward assignment:** We score the LLM's response as per below.
 
-## Training
+## Results 
+
+### Results on open models
+
+
+### Informal results on closed models
+
+Sadly I don't have the $$$ to run full eval here, so here's a mini "copy-paste" eval. **If you have an API key/are willing to contribute credits so I can run a larger, more "official" eval, please reach out.**
+
+I copy-pasted the prompt for the 01/06/2025 puzzle I designed into the chat box in a new chat instance for these models. 
+
+#### Results on Monday-difficulty
+
+This is a Monday crossword, so it's considered the easiest level. As a benchmark, I can generally solve these with 100% accuracy in ~5 min, and I'd consider myself a slightly-above-average solver. o4-high does the same. 
+
+|**Model**|**Clues Solved**|**Length Violations**|**Grid Inconsistencies**|**Time**|
+|-|-|-|-|-|
+|Gemini 2.5 Flash|51/76|13|6|~0:05|
+|Gemini 2.5 Pro|65/76|4|1|~3:00|
+|o4-mini |43/76|13|2|0:34|
+|o4-mini-high |76/76 |0|0 |5:10| 
+
+#### Results on Saturday-difficulty
+
+Here's a Saturday crossword, so it's considered the hardest level. I can generally solve these with ~90-95% accuracy in ~20 min (the pros do these in sub-5). Saturday is much harder for both humans and LLMs! Seems like the tougher/intentionally ambiguous wordplay makes this more challenging.
+
+|**Model**|**Clues Solved**|**Length Violations**|**Grid Inconsistencies**|**Time**|
+|-|-|-|-|-|
+|Gemini 2.5 Flash|17/62|31|21|~0:05|
+|Gemini 2.5 Pro|18/62|20|16|~5:00|
+|o4-mini |failed|-|-|-|
+|o4-mini-high |failed |-|- |-| 
+
+*I'd like to think I could solve more than 25% of a Saturday puzzle in 5 min...*
+
+"Failed" means the model refused/declined to solve the puzzle (e.g., acting like it was helping me), or responded with additional questions. We can redesign the prompt and re-run full eval. 
+
+## Training (not implemented fully)
 
 The above looks like a verifiable reward, so, hurr durr "you can just do things" RLVR go brrr.
 
+**But Trenton, you can already solve crosswords algorithmically!**
+* Yes, we already know that, via some combo of inference over clues + loopy belief propagation, we can solve NYT crosswords quite well (well enough to win the ACPT). 
+* It's possible to try and replicate that, possibly with some tool-calling (*wooooo agentic*) stuff.
+* I'm interested on if we can just have the model learn this behavior with good reward design 
+* What's more interesting to me is whether we can, via good reward design, simply fine-tune a model to solve these puzzles out of the box, that is - without crossword-specific heuristics — just a good 'ol verifier and a dream. 
+
+Our contribution here isn't to claim SOTA, but to (hopefully) show that the complex constraint-satisifying behavior required to solve crosswords can emerge from RL-based fine-tuning without baking in extra heuristics. 
+
 **On reward shaping**
 * To design a reward, we want to incentivize correct *full* clues, clues of the right length, and disincentivize clues with the wrong length, or constraint violations.
-* First, we apply a strict format reward.
-* We'll give +2 to clues of the right length, -2 to the LLM declining to fill in a clue, and 0 for clues of the wrong length (guessing is better than nothing).
-* We'll then add +10 for correct answers and +0 for incorrect answers. No reward is given for character similarity because that doesn't really matter for crossword clues -- e.g., my mistakes are usually semantic misunderstandings than a matter of edit distance. 
-* An additional -1 is allocated for constraint violations.
+* We combine four rewards: format (to parse JSON answers), clue correctness, length correctness, and grid consistency. We normalize these all to a 0-1 scale (see `rewards.py`).
 
-**Why RLVR instead of a test-time approach?**
-* We already know that, via some combo of inference over clues + loopy belief propagation, we can solve NYT crosswords quite well (well enough to win the ACPT). 
-* It's possible to try and replicate that using some tool-calling stuff, and we would probably get comparable results.
-* What's more interesting to me is whether we can, via good reward design, simply fine-tune a model to solve these puzzles out of the box, w/o these problem-specific heuristics, in a manner that's (1) competitive in performance w/ past approaches and (2) isn't so sample inefficient as to render learning infeasible.
-
+**Training algorithm**
+* Like everyone else we use a policy-gradient style method (e.g., GSPO). 

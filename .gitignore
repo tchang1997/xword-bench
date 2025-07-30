@@ -3,6 +3,3 @@ data/
 xword/
 results/
 src/xword_bench.egg-info
-
-get_nyt.py
-

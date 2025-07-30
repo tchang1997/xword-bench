@@ -47,6 +47,7 @@ REWARD_FN_MAP = {
 }
 
 def main():
+    # testing entry point 
     parser = argparse.ArgumentParser(description="Compute rewards for crossword submissions.")
     parser.add_argument("--puzzle", required=True, help="Path to puzzle JSON")
     parser.add_argument("--solution", required=True, help="Path(s) to submission JSON(s)")
