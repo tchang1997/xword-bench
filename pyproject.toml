@@ -1,0 +1,28 @@
+[project]
+name = "xword_bench"
+version = "0.1.0"
+description = "Tools and benchmarks for crossword solving with LLMs"
+authors = [
+    { name = "Trenton Chang", email = "ctrenton@umich.edu" }
+]
+requires-python = ">=3.8"
+dependencies = [
+    "transformers",
+    "trl",
+    "datasets"
+]
+
+[project.scripts]
+evaluate-crossword = "crossword.cli.evaluate:main"
+reward-crossword = "crossword.cli.reward:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
